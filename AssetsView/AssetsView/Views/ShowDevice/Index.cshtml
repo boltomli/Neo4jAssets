@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model AssetsView.Service.Assets
+
+@if ((Model.devices != null) && (Model.devices.Any() == true)){
+    foreach (var device in Model.devices)
+    {
+        <li class="list-group-item">
+            <h4>@Html.DisplayFor(modeItem => device.assetTag)</h4>
+            <div>
+                @Html.DisplayFor(modeItem => device.description)
+            </div>
+        </li>
+    }
+}
