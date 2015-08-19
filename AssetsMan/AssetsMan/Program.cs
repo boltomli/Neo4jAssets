@@ -20,14 +20,148 @@ namespace AssetsMan
         public string SN { get; set; }
         public string WSAsset { get; set; }
         public string AssetTag { get; set; }
+        public string Model { get; set; }
+        public string Manufacturer { get; set; }
+        public string CPU { get; set; }
     }
 
     class Program
     {
         static void Main(string[] args)
         {
-            UpdateReportsTo("relationship.txt");
-            UpdateAssetTag("assettag.txt");
+            //UpdateReportsTo("relationship.txt");
+            //UpdateAssetTag("assettag.txt");
+            //CleanupProperties();
+            //CreateType();
+        }
+
+        private static void CreateType()
+        {
+            var client = new GraphClient(new Uri("http://neo4j:111111@localhost:7474/db/data"));
+            client.Connect();
+
+            var data = client.Cypher
+                .Match("(device:Device)")
+                .Return(device => device.As<Device>())
+                .Results.ToList();
+
+            foreach (var result in data)
+            {
+                if (result.Manufacturer.ToLower().Contains("apple"))
+                {
+                    client.Cypher
+                        .Match("(device:Device {SN: {sn}})")
+                        .Set("device.Type = {type}")
+                        .WithParams(new
+                        {
+                            sn = result.SN,
+                            type = "Mac"
+                        })
+                        .ExecuteWithoutResults();
+                }
+                else if (!string.IsNullOrWhiteSpace(result.CPU))
+                {
+                    if (result.Manufacturer.ToLower().Contains("lenovo"))
+                    {
+                        client.Cypher
+                            .Match("(device:Device {SN: {sn}})")
+                            .Set("device.Type = {type}")
+                            .WithParams(new
+                            {
+                                sn = result.SN,
+                                type = "Laptop"
+                            })
+                            .ExecuteWithoutResults();
+                    }
+                    else
+                    {
+                        client.Cypher
+                            .Match("(device:Device {SN: {sn}})")
+                            .Set("device.Type = {type}")
+                            .WithParams(new
+                            {
+                                sn = result.SN,
+                                type = "Desktop"
+                            })
+                            .ExecuteWithoutResults();
+                    }
+                }
+                else if (result.Manufacturer.ToLower().Contains("del") && result.SN.Length > 7)
+                {
+                    client.Cypher
+                        .Match("(device:Device {SN: {sn}})")
+                        .Set("device.Type = {type}")
+                        .WithParams(new
+                        {
+                            sn = result.SN,
+                            type = "Monitor"
+                        })
+                        .ExecuteWithoutResults();
+                }
+                else
+                {
+                    client.Cypher
+                        .Match("(device:Device {SN: {sn}})")
+                        .Set("device.Type = {type}")
+                        .WithParams(new
+                        {
+                            sn = result.SN,
+                            type = "Misc"
+                        })
+                        .ExecuteWithoutResults();
+                }
+            }
+        }
+
+        private static void CleanupProperties()
+        {
+            var client = new GraphClient(new Uri("http://neo4j:111111@localhost:7474/db/data"));
+            client.Connect();
+
+            var data = client.Cypher
+                .Match("(device:Device)")
+                .Return(device => device.As<Device>())
+                .Results.ToList();
+
+            foreach (var result in data)
+            {
+                if (result.SN != result.SN.Trim())
+                {
+                    client.Cypher
+                        .Match("(device:Device {SN: {sn}})")
+                        .Set("device.SN = {trimsn}")
+                        .WithParams(new
+                        {
+                            sn = result.SN,
+                            trimsn = result.SN.Trim()
+                        })
+                        .ExecuteWithoutResults();
+                }
+                if (result.AssetTag != result.AssetTag.Trim())
+                {
+                    client.Cypher
+                        .Match("(device:Device {AssetTag: {asset}})")
+                        .Set("device.AssetTag = {trimasset}")
+                        .WithParams(new
+                        {
+                            asset = result.AssetTag,
+                            trimasset = result.AssetTag.Trim()
+                        })
+                        .ExecuteWithoutResults();
+                }
+                if (result.WSAsset != result.WSAsset.Trim())
+                {
+                    client.Cypher
+                        .Match("(device:Device {WSAsset: {wsasset}})")
+                        .Set("device.WSAsset = {trimwsasset}")
+                        .WithParams(new
+                        {
+                            wsasset = result.WSAsset,
+                            trimwsasset = result.WSAsset.Trim()
+                        })
+                        .ExecuteWithoutResults();
+                }
+            }
         }
 
         private static void UpdateReportsTo(string file)
@@ -136,7 +270,7 @@ namespace AssetsMan
                 }
             }
 
-            var client = new GraphClient(new Uri("http://neo4j:111111@stcvm-637:7474/db/data"));
+            var client = new GraphClient(new Uri("http://neo4j:111111@localhost:7474/db/data"));
             client.Connect();
 
             foreach (string deviceToUpdate in devicesWithSN.Keys)
