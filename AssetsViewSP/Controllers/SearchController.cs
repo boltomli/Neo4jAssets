@@ -16,6 +16,7 @@ namespace AssetsViewSP.Controllers
                .Where("o.MSAlias = {msalias}")
                .WithParam("msalias", q)
                .Return(d => d.As<Device>())
+               .OrderBy("d.AssetTag")
                .Results.ToList();
 
             return Ok(data.Select(c => new { device = c }));
