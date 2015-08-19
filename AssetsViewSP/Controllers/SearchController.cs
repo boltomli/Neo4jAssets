@@ -1,8 +1,5 @@
 ﻿using AssetsViewSP.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
 
 namespace AssetsViewSP.Controllers
@@ -18,7 +15,7 @@ namespace AssetsViewSP.Controllers
                .Match("(d:Device)<-[:OWNS]-(o:Owner)")
                .Where("o.MSAlias = {msalias}")
                .WithParam("msalias", q)
-               .Return<Device>("d")
+               .Return(d => d.As<Device>())
                .Results.ToList();
 
             return Ok(data.Select(c => new { device = c }));

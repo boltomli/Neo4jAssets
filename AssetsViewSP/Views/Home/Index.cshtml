@@ -2,12 +2,6 @@
     ViewBag.Title = "Home Page";
 }
 
-@*<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>*@
-
 <div class="row">
     <div class="col-md-4">
         <form role="search" class="navbar-form" id="search">
@@ -51,15 +45,11 @@
     <script type="text/javascript">
         $(function () {
             function showDevice(sn) {
-                $.get("/sn/" + encodeURIComponent(sn),
+                $.get("/device/" + encodeURIComponent(sn),
                         function (data) {
                             if (!data) return;
-                            //$("#title").text(data.title);
-                            //$("#poster").attr("src", "http://neo4j-contrib.github.io/developer-resources/language-guides/assets/posters/" + encodeURIComponent(data.title) + ".jpg");
-                            //var $list = $("#crew").empty();
-                            //data.cast.forEach(function (cast) {
-                            //    $list.append($("<li>" + cast.name + " " + cast.job + (cast.job == "acted" ? " as " + cast.role : "") + "</li>"));
-                            //});
+                            //$("#sn").text(data.SN);
+                            //$("#poster").attr("src", "//img/posters/" + encodeURIComponent(data.Type) + ".jpg");
                         }, "json");
                 return false;
             }
@@ -71,10 +61,10 @@
                             if (!data || data.length == 0) return;
                             data.forEach(function (row) {
                                 var device = row.device;
-                                $("<tr><td class='device'>" + device.SN + "</td><td>" + device.AssetTag + "</td><td>" + device.Model + "</td></tr>").appendTo(t)
-                                        .click(function () { showdevice($(this).find("td.device").text()); })
+                                $("<tr><td class='device'>" + device.sn + "</td><td>" + device.assetTag + "</td><td>" + device.model + "</td></tr>").appendTo(t)
+                                        .click(function () { showDevice($(this).find("td.device").text()); })
                             });
-                            showDevice(data[0].device.SN);
+                            showDevice(data[0].device.sn);
                         }, "json");
                 return false;
             }
