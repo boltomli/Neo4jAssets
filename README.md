@@ -7,5 +7,5 @@ Collect info and submit. Done, to be replaced by AssetsView.
 ## AssetsMan
 Maintenance tool used by admin. Workaround, to be retired if AssetsView can grow strong.
 
-## AssetsView
-On-going MVC web interface.
+## AssetsViewSP
+Single page web site to view assets. AssetsView is deprecated (so soon).
