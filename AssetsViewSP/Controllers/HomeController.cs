@@ -13,6 +13,11 @@ namespace AssetsViewSP.Controllers
             return View();
         }
 
+        public ActionResult AdvancedSearch()
+        {
+            return View();
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = string.Empty; //"Your application description page.";
