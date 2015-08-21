@@ -151,14 +151,7 @@ namespace WPFAssets
 
                 string msAlias = User.Text.Trim().ToLower();
                 string wsAlias = string.Empty;
-                if (msAlias.StartsWith("v-"))
-                {
-                    wsAlias = msAlias.Substring(2, msAlias.Length - 2);
-                }
-                else
-                {
-                    throw new Exception("User " + msAlias + " is not a valid owner of device.");
-                }
+                wsAlias = msAlias;
 
                 string sn = SN.Text.Trim();
                 if (string.IsNullOrWhiteSpace(sn) || string.Equals(sn.ToLower(), "serial number"))
